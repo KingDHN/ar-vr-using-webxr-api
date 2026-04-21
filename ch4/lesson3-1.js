@@ -149,7 +149,7 @@ function main() {
     mat4.rotate(modelViewMatrix,  // destination matrix
           modelViewMatrix,  // matrix to rotate
           cubeRotation,     // amount to rotate in radians
-          [0, 0, 1]);       // axis to rotate around (Z)
+          [1, 1, 0]);       // axis to rotate around (Z)
 
     gl.uniformMatrix4fv(modelMatrixLocation, false, modelViewMatrix);
             
@@ -166,7 +166,7 @@ function main() {
     const first = 0;
     const count = 18;
     gl.drawArrays(mode, first, count);   
-    cubeRotation += deltaTime;
+    cubeRotation += deltaTime * 2,0; //schneller drehen
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);

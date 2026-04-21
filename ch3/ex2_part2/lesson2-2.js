@@ -37,19 +37,19 @@ function main() {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(squares), gl.STATIC_DRAW);
 
     const squareColors = [
-        0.0,  0.0,  1.0,  1.0,
-        0.0,  0.0,  1.0,  1.0,
-        0.0,  0.0,  1.0,  1.0,
-        0.0,  0.0,  1.0,  1.0,
-        0.0,  0.0,  1.0,  1.0,
-        0.0,  0.0,  1.0,  1.0,
+        1.0,  0.0,  1.0,  1.0,     //rot
+        0.0,  1.0,  0.0,  1.0,     //grün
+        0.0,  0.0,  1.0,  1.0,     //blau
+        1.0,  1.0,  0.0,  1.0,     //gelb
+        1.0,  0.0,  1.0,  1.0,     //magenta
+        0.0,  1.0,  1.0,  1.0,     //cyan
 
-        1.0,  0.0,  0.0,  1.0,   
-        1.0,  0.0,  0.0,  1.0,  
-        1.0,  0.0,  0.0,  1.0,  
-        1.0,  0.0,  0.0,  1.0,  
-        1.0,  0.0,  0.0,  1.0,  
-        1.0,  0.0,  0.0,  1.0,
+        1.0,  0.5,  0.0,  1.0,     //orange
+        0.5,  0.0,  1.0,  1.0,     //lila
+        0.2,  1.0,  0.2,  1.0,     //hellgrün
+        1.0,  0.2,  0.2,  1.0,     //hellrot
+        0.2,  0.2,  1.0,  1.0,     //hellblau
+        1.0,  1.0,  1.0,  1.0,     //weiß
     ];
      
       const colorBuffer = gl.createBuffer();
@@ -113,15 +113,24 @@ function main() {
     gl.vertexAttribPointer(posAttribLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(posAttribLocation);
 
+    // FALSCH (absichtlich)
+     //gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    //gl.vertexAttribPointer(posAttribLocation, 3, gl.FLOAT, false, 0, 0);
+
     const colorAttribLocation = gl.getAttribLocation(program, "aVertexColor");
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttribLocation);
+    
+    // FALSCH (absichtlich)
+    //gl.bindBuffer(gl.ARRAY_BUFFER, origBuffer);
+    //gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
+    
             
     /*========== Drawing ========== */
     gl.clearColor(1, 1, 1, 1);
     
-    gl.enable(gl.DEPTH_TEST);
+    //gl.enable(gl.DEPTH_TEST); // extra Auskommentiert für Aufgabe 5 d
     //gl.depthFunc(gl.LEQUAL);
     
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
