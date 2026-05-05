@@ -32,42 +32,23 @@ function main() {
     camera.lookAt(scene.position);
 
     // GEOMETRY
-    // create the cube
     const cubeSize = 4;
-    const cubeGeometry = new THREE.BoxGeometry(
-        cubeSize,
-        cubeSize,
-        cubeSize
-    );
+    const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
 
-    // Create the Sphere
     const sphereRadius = 3;
-    const sphereWidthSegments = 32;
-    const sphereHeightSegments = 16;
-    const sphereGeometry = new THREE.SphereGeometry(
-        sphereRadius,
-        sphereWidthSegments,
-        sphereHeightSegments
-    );
+    const sphereGeometry = new THREE.SphereGeometry(sphereRadius, 32, 16);
 
-    // Create the upright plane
-    const planeWidth = 256;
-    const planeHeight = 128;
-    const planeGeometry = new THREE.PlaneGeometry(
-        planeWidth,
-        planeHeight
-    );
+    const planeGeometry = new THREE.PlaneGeometry(256, 128);
 
     // MATERIALS
     const textureLoader = new THREE.TextureLoader();
 
-    const cubeMaterial = new THREE.MeshPhongMaterial({
-        color: 'pink'
-    });
+    const cubeMaterial = new THREE.MeshPhongMaterial({ color: 'pink' });
 
     const sphereNormalMap = textureLoader.load('textures/sphere_normal.png');
     sphereNormalMap.wrapS = THREE.RepeatWrapping;
     sphereNormalMap.wrapT = THREE.RepeatWrapping;
+
     const sphereMaterial = new THREE.MeshStandardMaterial({
         color: 'tan',
         normalMap: sphereNormalMap
@@ -108,19 +89,49 @@ function main() {
     plane.receiveShadow = true;
     scene.add(plane);
 
+    //  TEAPOT LADEN (NEU)
+    const teapotTexture = textureLoader.load('stone.jpg');
+    teapotTexture.wrapS = THREE.RepeatWrapping;
+    teapotTexture.wrapT = THREE.RepeatWrapping;
+
+    const objLoader = new THREE.OBJLoader();
+
+    objLoader.load(
+        'teapot.obj',
+        function (mesh) {
+            const teapotMaterial = new THREE.MeshPhongMaterial({
+                map: teapotTexture
+            });
+
+            mesh.children.forEach(function (child) {
+                child.material = teapotMaterial;
+                child.castShadow = true;
+                child.receiveShadow = true;
+            });
+
+            mesh.position.set(-15, 2, 0);
+            mesh.rotation.set(-Math.PI / 2, 0, 0);
+            mesh.scale.set(0.005, 0.005, 0.005);
+
+            scene.add(mesh);
+        },
+        function (xhr) {
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        },
+        function (error) {
+            console.log(error);
+        }
+    );
+
     // LIGHTS
-    const color = 0xffffff;
-    const intensity = 0.7;
-    const light = new THREE.DirectionalLight(color, intensity);
+    const light = new THREE.DirectionalLight(0xffffff, 0.7);
     light.target = plane;
     light.position.set(0, 30, 30);
     light.castShadow = true;
     scene.add(light);
     scene.add(light.target);
 
-    const ambientColor = 0xffffff;
-    const ambientIntensity = 0.2;
-    const ambientLight = new THREE.AmbientLight(ambientColor, ambientIntensity);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
 
     // GUI
@@ -131,7 +142,7 @@ function main() {
     const gui = new dat.GUI();
     gui.add(controls, 'rotationSpeed', 0, 0.5);
 
-    // Trackball controls
+    // CONTROLS
     const trackballControls = initTrackballControls(camera, gl);
     const clock = new THREE.Clock();
 
@@ -166,7 +177,7 @@ function main() {
     requestAnimationFrame(draw);
 }
 
-// UPDATE RESIZE
+// RESIZE
 function resizeGLToDisplaySize(gl) {
     const canvas = gl.domElement;
     const width = canvas.clientWidth;
