@@ -89,7 +89,7 @@ function main() {
     plane.receiveShadow = true;
     scene.add(plane);
 
-    //  TEAPOT LADEN (NEU)
+    // TEAPOT
     const teapotTexture = textureLoader.load('stone.jpg');
     teapotTexture.wrapS = THREE.RepeatWrapping;
     teapotTexture.wrapT = THREE.RepeatWrapping;
@@ -134,13 +134,44 @@ function main() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
 
+    // ROBOT ARM
+    let h1 = 6;
+    let h2 = 5;
+    let h3 = 4;
+
+    let seg1 = addSeg(scene, h1, 0);
+    let seg2 = addSeg(seg1, h2, h1);
+    let seg3 = addSeg(seg2, h3, h2);
+
+    // POINT LIGHT AT ROBOT TIP
+    const robotTipLight = new THREE.PointLight(0xffaa00, 3, 15);
+    robotTipLight.position.set(0, h3, 0);
+    robotTipLight.castShadow = true;
+    seg3.add(robotTipLight);
+
+    const robotTipMarker = new THREE.Mesh(
+        new THREE.SphereGeometry(0.3, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffaa00 })
+    );
+    robotTipMarker.position.set(0, h3, 0);
+    seg3.add(robotTipMarker);
+
     // GUI
     const controls = new function () {
         this.rotationSpeed = 0.01;
+
+        this.rotY1 = 0;
+        this.rotZ1 = 0;
+        this.rotZ2 = 0;
+        this.rotZ3 = 0;
     };
 
     const gui = new dat.GUI();
     gui.add(controls, 'rotationSpeed', 0, 0.5);
+    gui.add(controls, 'rotY1', 0, 2 * Math.PI);
+    gui.add(controls, 'rotZ1', 0, 2 * Math.PI);
+    gui.add(controls, 'rotZ2', 0, 2 * Math.PI);
+    gui.add(controls, 'rotZ3', 0, 2 * Math.PI);
 
     // CONTROLS
     const trackballControls = initTrackballControls(camera, gl);
@@ -167,6 +198,11 @@ function main() {
         sphere.rotation.y += controls.rotationSpeed;
         sphere.rotation.z += controls.rotationSpeed;
 
+        seg1.rotation.y = controls.rotY1;
+        seg1.rotation.z = controls.rotZ1;
+        seg2.rotation.z = controls.rotZ2;
+        seg3.rotation.z = controls.rotZ3;
+
         light.position.x = 20 * Math.cos(time);
         light.position.y = 20 * Math.sin(time);
 
@@ -175,6 +211,36 @@ function main() {
     }
 
     requestAnimationFrame(draw);
+}
+
+// ROBOT SEGMENT FUNCTION
+function addSeg(parent, height, posY) {
+    const axisSphere = new THREE.Group();
+    axisSphere.position.y = posY;
+    parent.add(axisSphere);
+
+    const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
+    const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0x7777ff });
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+    sphere.scale.x = 0.3;
+    sphere.scale.y = height / 2;
+    sphere.scale.z = 0.3;
+
+    sphere.position.x = 0;
+    sphere.position.y = height / 2;
+    sphere.position.z = 0;
+
+    sphere.castShadow = true;
+    sphere.receiveShadow = true;
+
+    axisSphere.add(sphere);
+
+    // Longer axis helper lines
+    const tripod = new THREE.AxesHelper(5);
+    axisSphere.add(tripod);
+
+    return axisSphere;
 }
 
 // RESIZE
